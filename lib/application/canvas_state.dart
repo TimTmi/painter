@@ -25,6 +25,19 @@ class CanvasState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void replaceShape(Shape oldShape, Shape newShape) {
+    final index = _shapes.indexOf(oldShape);
+    if (index == -1) return;
+    _shapes[index] = newShape;
+    notifyListeners();
+  }
+
+  void removeShape(Shape shape) {
+    if (_shapes.remove(shape)) {
+      notifyListeners();
+    }
+  }
+
   Shape? findShapeAt(Offset point) {
     for (var i = _shapes.length - 1; i >= 0; i--) {
       if (_shapes[i].contains(point)) {

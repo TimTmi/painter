@@ -35,4 +35,15 @@ class RectangleShape extends Shape {
   bool contains(Offset point) {
     return rect.inflate(strokeWidth / 2).contains(point);
   }
+
+  @override
+  RectangleShape copyWith({Color? strokeColor, Color? fillColor, double? strokeWidth}) {
+    return RectangleShape(
+      start: start,
+      end: end,
+      strokeColor: strokeColor ?? this.strokeColor,
+      fillColor: fillColor ?? this.fillColor,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+    );
+  }
 }

@@ -5,4 +5,6 @@ enum ToolType {
   square,
   circle,
   ellipse,
+  fill,
+  erase,
 }

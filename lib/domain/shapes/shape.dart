@@ -13,4 +13,5 @@ abstract class Shape {
 
   void draw(Canvas canvas);
   bool contains(Offset point);
+  Shape copyWith({Color? strokeColor, Color? fillColor, double? strokeWidth});
 }

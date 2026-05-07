@@ -36,4 +36,15 @@ class LineShape extends Shape {
     final projection = start + v * t;
     return (point - projection).distance <= strokeWidth / 2;
   }
+
+  @override
+  LineShape copyWith({Color? strokeColor, Color? fillColor, double? strokeWidth}) {
+    return LineShape(
+      start: start,
+      end: end,
+      strokeColor: strokeColor ?? this.strokeColor,
+      fillColor: fillColor ?? this.fillColor,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+    );
+  }
 }

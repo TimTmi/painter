@@ -59,6 +59,10 @@ class _DrawingScreenState extends State<DrawingScreen> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
+  void _handleCanvasTap(Offset point) {
+    _drawingController.applyTool(point);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,6 +78,7 @@ class _DrawingScreenState extends State<DrawingScreen> {
             child: CanvasArea(
               canvasState: _canvasState,
               onDragChanged: _handleCanvasDragChanged,
+              onTap: _handleCanvasTap,
             ),
           ),
           AnimatedBuilder(

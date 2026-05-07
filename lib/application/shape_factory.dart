@@ -62,6 +62,9 @@ class ShapeFactory {
         fillColor: fillColor,
         strokeWidth: strokeWidth,
       ),
+      ToolType.fill || ToolType.erase => throw ArgumentError(
+        'ShapeFactory.create: $toolType is not a drawing tool',
+      ),
     };
   }
 }

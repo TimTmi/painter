@@ -40,4 +40,19 @@ class EllipseShape extends Shape {
     final dy = point.dy - center.dy;
     return (dx * dx) / (a * a) + (dy * dy) / (b * b) <= 1.0;
   }
+
+  @override
+  EllipseShape copyWith({
+    Color? strokeColor,
+    Color? fillColor,
+    double? strokeWidth,
+  }) {
+    return EllipseShape(
+      start: start,
+      end: end,
+      strokeColor: strokeColor ?? this.strokeColor,
+      fillColor: fillColor ?? this.fillColor,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+    );
+  }
 }

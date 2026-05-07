@@ -10,14 +10,20 @@ import 'package:paint/domain/shapes/shape.dart';
 
 class MockShape extends Shape {
   const MockShape()
-    : super(
-        strokeColor: const Color(0xFF000000),
-        fillColor: const Color(0x00000000),
-        strokeWidth: 1,
-      );
+      : super(
+          strokeColor: const Color(0xFF000000),
+          fillColor: const Color(0x00000000),
+          strokeWidth: 1,
+        );
 
   @override
   void draw(Canvas canvas) {}
+
+  @override
+  bool contains(Offset point) => false;
+
+  @override
+  MockShape copyWith({Color? strokeColor, Color? fillColor, double? strokeWidth}) => this;
 }
 
 void main() {
