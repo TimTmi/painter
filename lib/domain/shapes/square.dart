@@ -18,16 +18,16 @@ class SquareShape extends Shape {
   Rect get rect => ShapeBounds.squareFromPoints(start, end);
 
   @override
-  void draw(Canvas canvas) {
-    final fillPaint = Paint()
+  void draw(Canvas canvas, Size size, Paint paint) {
+    paint
       ..color = fillColor
       ..style = PaintingStyle.fill;
-    canvas.drawRect(rect, fillPaint);
+    canvas.drawRect(rect, paint);
 
-    final strokePaint = Paint()
+    paint
       ..color = strokeColor
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
-    canvas.drawRect(rect, strokePaint);
+    canvas.drawRect(rect, paint);
   }
 }

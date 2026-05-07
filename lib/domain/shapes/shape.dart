@@ -11,5 +11,5 @@ abstract class Shape {
   final Color fillColor;
   final double strokeWidth;
 
-  void draw(Canvas canvas);
+  void draw(Canvas canvas, Size size, Paint paint);
 }

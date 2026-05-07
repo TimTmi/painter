@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:paint/application/tool_controller.dart';
 import 'package:paint/application/tool_type.dart';
 
 class Toolbar extends StatefulWidget {
-  const Toolbar({super.key});
+  const Toolbar({super.key, required this.controller});
+
+  final ToolController controller;
 
   @override
   State<Toolbar> createState() => _ToolbarState();
 }
 
 class _ToolbarState extends State<Toolbar> {
-  ToolType _selected = ToolType.point;
   double _strokeWidth = 4;
   Color _color = Colors.black;
-
-  void _selectTool(ToolType tool) {
-    setState(() => _selected = tool);
-  }
 
   void _setStrokeWidth(double v) {
     setState(() => _strokeWidth = v);
@@ -26,31 +24,36 @@ class _ToolbarState extends State<Toolbar> {
   }
 
   Widget _toolButton(ToolType tool, IconData icon, String label) {
-    final selected = _selected == tool;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            onPressed: () => _selectTool(tool),
-            icon: Icon(icon),
-            color: selected ? Theme.of(context).colorScheme.primary : null,
-            tooltip: label,
-          ),
-          if (selected)
-            SizedBox(
-              height: 4,
-              width: 32,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(4),
-                ),
+    return ListenableBuilder(
+      listenable: widget.controller,
+      builder: (context, _) {
+        final selected = widget.controller.selectedTool == tool;
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed: () => widget.controller.setTool(tool),
+                icon: Icon(icon),
+                color: selected ? Theme.of(context).colorScheme.primary : null,
+                tooltip: label,
               ),
-            ),
-        ],
-      ),
+              if (selected)
+                SizedBox(
+                  height: 4,
+                  width: 32,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -58,24 +61,20 @@ class _ToolbarState extends State<Toolbar> {
   Widget build(BuildContext context) {
     return Material(
       color: Theme.of(context).colorScheme.surface,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(width: 8),
-            _toolButton(ToolType.point, Icons.radio_button_checked, 'Point'),
+            // Tools
+            _toolButton(ToolType.point, Icons.edit, 'Point'),
             _toolButton(ToolType.line, Icons.show_chart, 'Line'),
             _toolButton(ToolType.rectangle, Icons.crop_square, 'Rect'),
-            _toolButton(
-              ToolType.square,
-              Icons.check_box_outline_blank,
-              'Square',
-            ),
+            _toolButton(ToolType.square, Icons.check_box_outline_blank, 'Square'),
             _toolButton(ToolType.circle, Icons.circle_outlined, 'Circle'),
-            _toolButton(ToolType.ellipse, Icons.panorama_fish_eye, 'Ellipse'),
+            _toolButton(ToolType.ellipse, Icons.circle, 'Ellipse'),
             const VerticalDivider(width: 20),
 
+            // Stroke width (mock)
             SizedBox(
               width: 180,
               child: Row(
@@ -97,6 +96,7 @@ class _ToolbarState extends State<Toolbar> {
 
             const VerticalDivider(width: 20),
 
+            // Color swatches (mock)
             Row(
               children: [
                 _colorSwatch(Colors.black),
@@ -107,11 +107,17 @@ class _ToolbarState extends State<Toolbar> {
               ],
             ),
 
+            const Spacer(),
+
+            // Status summary (small)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.only(right: 8.0),
               child: Row(
                 children: [
-                  Text(_selected.name.toUpperCase()),
+                  ListenableBuilder(
+                    listenable: widget.controller,
+                    builder: (context, _) => Text(widget.controller.selectedTool.name.toUpperCase()),
+                  ),
                   const SizedBox(width: 8),
                   Container(
                     width: 20,

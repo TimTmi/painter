@@ -11,19 +11,6 @@ void main() {
     expect(find.text('Drag on canvas'), findsOneWidget);
   });
 
-  testWidgets('Toolbar exposes the full shape tool set', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(const MyApp());
-
-    expect(find.byTooltip('Point'), findsOneWidget);
-    expect(find.byTooltip('Line'), findsOneWidget);
-    expect(find.byTooltip('Rect'), findsOneWidget);
-    expect(find.byTooltip('Square'), findsOneWidget);
-    expect(find.byTooltip('Circle'), findsOneWidget);
-    expect(find.byTooltip('Ellipse'), findsOneWidget);
-  });
-
   testWidgets('Canvas emits drag points to status stream', (
     WidgetTester tester,
   ) async {

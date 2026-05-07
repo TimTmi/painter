@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:paint/application/drawing_controller.dart';
+import 'package:paint/application/canvas_controller.dart';
+import 'package:paint/application/canvas_state.dart';
+import 'package:paint/application/tool_controller.dart';
 import 'package:paint/presentation/widgets/canvas_area.dart';
 import 'package:paint/presentation/widgets/toolbar.dart';
 
@@ -11,29 +13,27 @@ class DrawingScreen extends StatefulWidget {
 }
 
 class _DrawingScreenState extends State<DrawingScreen> {
-  final DrawingController _drawingController = DrawingController();
+  late final CanvasState _canvasState;
+  late final ToolController _toolController;
+  late final CanvasController _canvasController;
+
+  @override
+  void initState() {
+    super.initState();
+    _canvasState = CanvasState();
+    _toolController = ToolController();
+    _canvasController = CanvasController(
+      canvasState: _canvasState,
+      toolController: _toolController,
+    );
+  }
 
   @override
   void dispose() {
-    _drawingController.dispose();
+    _canvasState.dispose();
+    _toolController.dispose();
+    _canvasController.dispose();
     super.dispose();
-  }
-
-  void _handleCanvasDragChanged(CanvasDragState dragState) {
-    switch (dragState.phase) {
-      case CanvasDragPhase.start:
-        _drawingController.startDrawing(dragState.startPoint);
-        break;
-      case CanvasDragPhase.update:
-        _drawingController.updateDrawing(dragState.currentPoint);
-        break;
-      case CanvasDragPhase.end:
-        _drawingController.endDrawing();
-        break;
-      case CanvasDragPhase.cancel:
-        _drawingController.cancelDrawing();
-        break;
-    }
   }
 
   @override
@@ -42,21 +42,16 @@ class _DrawingScreenState extends State<DrawingScreen> {
       appBar: AppBar(title: const Text('Painter')),
       body: Column(
         children: [
-          const Toolbar(),
-          Expanded(child: CanvasArea(onDragChanged: _handleCanvasDragChanged)),
-          AnimatedBuilder(
-            animation: _drawingController,
+          Toolbar(controller: _toolController),
+          Expanded(
+            child: CanvasArea(controller: _canvasController),
+          ),
+          ListenableBuilder(
+            listenable: _canvasController,
             builder: (context, child) {
-              final startPoint = _drawingController.startPoint;
-              final currentPoint = _drawingController.currentPoint;
-
-              if (startPoint == null || currentPoint == null) {
-                return const _PointStatus(text: 'Drag on canvas');
-              }
-
-              return _PointStatus(
-                text:
-                    'start: ${_formatOffset(startPoint)} | current: ${_formatOffset(currentPoint)} | drawing: ${_drawingController.isDrawing}',
+              return _StatusFooter(
+                toolName: _toolController.selectedTool.name,
+                shapeCount: _canvasState.shapes.length,
               );
             },
           ),
@@ -64,16 +59,16 @@ class _DrawingScreenState extends State<DrawingScreen> {
       ),
     );
   }
-
-  String _formatOffset(Offset offset) {
-    return '(${offset.dx.toStringAsFixed(1)}, ${offset.dy.toStringAsFixed(1)})';
-  }
 }
 
-class _PointStatus extends StatelessWidget {
-  const _PointStatus({required this.text});
+class _StatusFooter extends StatelessWidget {
+  const _StatusFooter({
+    required this.toolName,
+    required this.shapeCount,
+  });
 
-  final String text;
+  final String toolName;
+  final int shapeCount;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +76,10 @@ class _PointStatus extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+      child: Text(
+        'Tool: ${toolName.toUpperCase()} | Shapes: $shapeCount',
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
     );
   }
 }

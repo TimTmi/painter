@@ -1,107 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:paint/application/canvas_controller.dart';
+import 'package:paint/presentation/canvas_painter.dart';
 
-enum CanvasDragPhase { start, update, end, cancel }
+class CanvasArea extends StatelessWidget {
+  const CanvasArea({super.key, required this.controller});
 
-class CanvasDragState {
-  const CanvasDragState({
-    required this.startPoint,
-    required this.currentPoint,
-    required this.phase,
-    required this.isDragging,
-  });
-
-  final Offset startPoint;
-  final Offset currentPoint;
-  final CanvasDragPhase phase;
-  final bool isDragging;
-}
-
-class CanvasArea extends StatefulWidget {
-  const CanvasArea({super.key, this.onDragChanged});
-
-  final ValueChanged<CanvasDragState>? onDragChanged;
-
-  @override
-  State<CanvasArea> createState() => _CanvasAreaState();
-}
-
-class _CanvasAreaState extends State<CanvasArea> {
-  Offset? _startPoint;
-  Offset? _currentPoint;
-
-  void _emitDragState({
-    required CanvasDragPhase phase,
-    required bool isDragging,
-  }) {
-    final startPoint = _startPoint;
-    final currentPoint = _currentPoint;
-
-    if (startPoint == null || currentPoint == null) {
-      return;
-    }
-
-    widget.onDragChanged?.call(
-      CanvasDragState(
-        startPoint: startPoint,
-        currentPoint: currentPoint,
-        phase: phase,
-        isDragging: isDragging,
-      ),
-    );
-  }
-
-  void _handlePanStart(DragStartDetails details) {
-    _startPoint = details.localPosition;
-    _currentPoint = details.localPosition;
-    _emitDragState(phase: CanvasDragPhase.start, isDragging: true);
-  }
-
-  void _handlePanUpdate(DragUpdateDetails details) {
-    _currentPoint = details.localPosition;
-    _emitDragState(phase: CanvasDragPhase.update, isDragging: true);
-  }
-
-  void _handlePanEnd(DragEndDetails details) {
-    _emitDragState(phase: CanvasDragPhase.end, isDragging: false);
-  }
-
-  void _handlePanCancel() {
-    _emitDragState(phase: CanvasDragPhase.cancel, isDragging: false);
-  }
+  final CanvasController controller;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onPanStart: _handlePanStart,
-      onPanUpdate: _handlePanUpdate,
-      onPanEnd: _handlePanEnd,
-      onPanCancel: _handlePanCancel,
+      onPanStart: (details) => controller.onPointerDown(details.localPosition),
+      onPanUpdate: (details) => controller.onPointerMove(details.localPosition),
+      onPanEnd: (details) => controller.onPointerUp(details.localPosition),
       child: RepaintBoundary(
         child: CustomPaint(
-          painter: const CanvasBackgroundPainter(),
+          painter: CanvasPainter(state: controller.canvasState),
           child: const SizedBox.expand(),
         ),
       ),
     );
   }
-}
-
-class CanvasBackgroundPainter extends CustomPainter {
-  const CanvasBackgroundPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final backgroundPaint = Paint()..color = Colors.white;
-    canvas.drawRect(Offset.zero & size, backgroundPaint);
-
-    final borderPaint = Paint()
-      ..color = const Color(0xFFE0E0E0)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    canvas.drawRect(Offset.zero & size, borderPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CanvasBackgroundPainter oldDelegate) => false;
 }

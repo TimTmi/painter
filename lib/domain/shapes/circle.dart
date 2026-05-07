@@ -18,16 +18,16 @@ class CircleShape extends Shape {
   Rect get rect => ShapeBounds.squareFromPoints(start, end);
 
   @override
-  void draw(Canvas canvas) {
-    final fillPaint = Paint()
+  void draw(Canvas canvas, Size size, Paint paint) {
+    paint
       ..color = fillColor
       ..style = PaintingStyle.fill;
-    canvas.drawOval(rect, fillPaint);
+    canvas.drawOval(rect, paint);
 
-    final strokePaint = Paint()
+    paint
       ..color = strokeColor
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
-    canvas.drawOval(rect, strokePaint);
+    canvas.drawOval(rect, paint);
   }
 }

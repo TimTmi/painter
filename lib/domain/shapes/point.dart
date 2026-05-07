@@ -15,8 +15,8 @@ class PointShape extends Shape {
   double get radius => strokeWidth / 2;
 
   @override
-  void draw(Canvas canvas) {
-    final paint = Paint()
+  void draw(Canvas canvas, Size size, Paint paint) {
+    paint
       ..color = strokeColor
       ..style = PaintingStyle.fill;
 

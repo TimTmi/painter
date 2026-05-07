@@ -15,8 +15,8 @@ class LineShape extends Shape {
   final Offset end;
 
   @override
-  void draw(Canvas canvas) {
-    final paint = Paint()
+  void draw(Canvas canvas, Size size, Paint paint) {
+    paint
       ..color = strokeColor
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
