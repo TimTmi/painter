@@ -12,4 +12,5 @@ abstract class Shape {
   final double strokeWidth;
 
   void draw(Canvas canvas);
+  bool contains(Offset point);
 }

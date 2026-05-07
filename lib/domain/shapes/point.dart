@@ -22,4 +22,9 @@ class PointShape extends Shape {
 
     canvas.drawCircle(center, radius, paint);
   }
+
+  @override
+  bool contains(Offset point) {
+    return (point - center).distance <= radius;
+  }
 }

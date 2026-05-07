@@ -30,4 +30,9 @@ class RectangleShape extends Shape {
       ..style = PaintingStyle.stroke;
     canvas.drawRect(rect, strokePaint);
   }
+
+  @override
+  bool contains(Offset point) {
+    return rect.inflate(strokeWidth / 2).contains(point);
+  }
 }
