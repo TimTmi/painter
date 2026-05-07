@@ -3,23 +3,46 @@ import 'package:paint/application/tool_controller.dart';
 import 'package:paint/application/tool_type.dart';
 
 class Toolbar extends StatefulWidget {
-  const Toolbar({super.key, required this.toolController, this.onSave, this.onLoad});
+  const Toolbar({super.key, this.toolController, this.onSave, this.onLoad});
 
+  final ToolController? toolController;
   final VoidCallback? onSave;
   final VoidCallback? onLoad;
 
-  final ToolController toolController;
+  @override
+  State<Toolbar> createState() => _ToolbarState();
+}
+
+class _ToolbarState extends State<Toolbar> {
+  late final ToolController _ownedToolController;
+
+  ToolController get _toolController =>
+      widget.toolController ?? _ownedToolController;
+
+  @override
+  void initState() {
+    super.initState();
+    _ownedToolController = ToolController();
+  }
+
+  @override
+  void dispose() {
+    if (widget.toolController == null) {
+      _ownedToolController.dispose();
+    }
+    super.dispose();
+  }
 
   void _selectTool(ToolType tool) {
-    toolController.setTool(tool);
+    _toolController.setTool(tool);
   }
 
   void _setStrokeWidth(double value) {
-    toolController.setStrokeWidth(value);
+    _toolController.setStrokeWidth(value);
   }
 
   void _setColor(Color color) {
-    toolController.setStrokeColor(color);
+    _toolController.setStrokeColor(color);
   }
 
   Widget _toolButton(
@@ -72,11 +95,11 @@ class Toolbar extends StatefulWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: toolController,
+      animation: _toolController,
       builder: (context, child) {
-        final selectedTool = toolController.selectedTool;
-        final strokeWidth = toolController.strokeWidth;
-        final strokeColor = toolController.strokeColor;
+        final selectedTool = _toolController.selectedTool;
+        final strokeWidth = _toolController.strokeWidth;
+        final strokeColor = _toolController.strokeColor;
 
         return Material(
           color: Theme.of(context).colorScheme.surface,
@@ -84,42 +107,19 @@ class Toolbar extends StatefulWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               mainAxisSize: MainAxisSize.min,
-            _fileButton(
-              icon: Icons.save_outlined,
-              label: 'Save',
-              onPressed: widget.onSave,
-            ),
-            _fileButton(
-              icon: Icons.folder_open_outlined,
-              label: 'Load',
-              onPressed: widget.onLoad,
-            ),
-            const VerticalDivider(width: 20),
-
-            SizedBox(
-              width: 180,
-              child: Row(
-                children: [
-                  const Text('Width'),
-                  Expanded(
-                    child: Slider(
-                      value: _strokeWidth,
-                      min: 1,
-                      max: 20,
-                      divisions: 19,
-                      label: _strokeWidth.toStringAsFixed(0),
-                      onChanged: _setStrokeWidth,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const VerticalDivider(width: 20),
-
-            Row(
               children: [
                 const SizedBox(width: 8),
+                _fileButton(
+                  icon: Icons.save_outlined,
+                  label: 'Save',
+                  onPressed: widget.onSave,
+                ),
+                _fileButton(
+                  icon: Icons.folder_open_outlined,
+                  label: 'Load',
+                  onPressed: widget.onLoad,
+                ),
+                const VerticalDivider(width: 20),
                 _toolButton(
                   context,
                   selectedTool,

@@ -65,7 +65,11 @@ class _DrawingScreenState extends State<DrawingScreen> {
       appBar: AppBar(title: const Text('Painter')),
       body: Column(
         children: [
-          Toolbar(toolController: _toolController, onSave: _handleSavePressed, onLoad: _handleLoadPressed),
+          Toolbar(
+            toolController: _toolController,
+            onSave: _handleSavePressed,
+            onLoad: _handleLoadPressed,
+          ),
           Expanded(
             child: CanvasArea(
               canvasState: _canvasState,
