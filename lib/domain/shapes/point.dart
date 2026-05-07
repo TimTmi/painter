@@ -22,4 +22,23 @@ class PointShape extends Shape {
 
     canvas.drawCircle(center, radius, paint);
   }
+
+  @override
+  bool contains(Offset point) {
+    return (point - center).distance <= radius;
+  }
+
+  @override
+  PointShape copyWith({
+    Color? strokeColor,
+    Color? fillColor,
+    double? strokeWidth,
+  }) {
+    return PointShape(
+      center: center,
+      strokeColor: strokeColor ?? this.strokeColor,
+      fillColor: fillColor ?? this.fillColor,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+    );
+  }
 }

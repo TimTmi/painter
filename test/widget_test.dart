@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:paint/domain/shapes/line.dart';
+import 'package:paint/domain/shapes/shape.dart';
+import 'package:paint/infrastructure/binary_file_service.dart';
 
 import 'package:paint/main.dart';
+import 'package:paint/presentation/drawing_screen.dart';
 import 'package:paint/presentation/widgets/canvas_area.dart';
 import 'package:paint/presentation/widgets/toolbar.dart';
 
@@ -68,15 +72,29 @@ void main() {
   testWidgets('Painter screen wires save and load button actions', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    final fileService = FakeBinaryFileService(
+      loadResult: const [
+        LineShape(
+          start: Offset(0, 0),
+          end: Offset(10, 10),
+          strokeColor: Color(0xFF000000),
+          strokeWidth: 1,
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(home: DrawingScreen(binaryFileService: fileService)),
+    );
 
     await tester.tap(find.byTooltip('Save'));
-    await tester.pump();
-    expect(find.text('Save file'), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(fileService.savedShapes, isNotNull);
+    expect(find.text('Saved painter file'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Load'));
-    await tester.pump();
-    expect(find.text('Load file'), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.text('Loaded 1 shape(s)'), findsOneWidget);
   });
 
   testWidgets('Canvas emits drag points to status stream', (
@@ -122,5 +140,23 @@ class ToolbarTestHost extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class FakeBinaryFileService implements BinaryFileService {
+  FakeBinaryFileService({this.loadResult});
+
+  final List<Shape>? loadResult;
+  List<Shape>? savedShapes;
+
+  @override
+  Future<bool> saveShapes(Iterable<Shape> shapes) async {
+    savedShapes = List<Shape>.unmodifiable(shapes);
+    return true;
+  }
+
+  @override
+  Future<List<Shape>?> loadShapes() async {
+    return loadResult;
   }
 }

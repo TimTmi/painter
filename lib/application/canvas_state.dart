@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:paint/domain/shapes/shape.dart';
 
@@ -39,6 +40,14 @@ class CanvasState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void replaceShapes(Iterable<Shape> shapes) {
+    _shapes
+      ..clear()
+      ..addAll(shapes);
+    _previewShape = null;
+    notifyListeners();
+  }
+
   void clear() {
     if (_shapes.isEmpty && _previewShape == null) {
       return;
@@ -47,5 +56,27 @@ class CanvasState extends ChangeNotifier {
     _shapes.clear();
     _previewShape = null;
     notifyListeners();
+  }
+
+  void replaceShape(Shape oldShape, Shape newShape) {
+    final index = _shapes.indexOf(oldShape);
+    if (index == -1) return;
+    _shapes[index] = newShape;
+    notifyListeners();
+  }
+
+  void removeShape(Shape shape) {
+    if (_shapes.remove(shape)) {
+      notifyListeners();
+    }
+  }
+
+  Shape? findShapeAt(Offset point) {
+    for (var i = _shapes.length - 1; i >= 0; i--) {
+      if (_shapes[i].contains(point)) {
+        return _shapes[i];
+      }
+    }
+    return null;
   }
 }

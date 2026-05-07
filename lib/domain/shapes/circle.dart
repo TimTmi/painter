@@ -30,4 +30,24 @@ class CircleShape extends Shape {
       ..style = PaintingStyle.stroke;
     canvas.drawOval(rect, strokePaint);
   }
+
+  @override
+  bool contains(Offset point) {
+    return (point - rect.center).distance <= (rect.width / 2 + strokeWidth / 2);
+  }
+
+  @override
+  CircleShape copyWith({
+    Color? strokeColor,
+    Color? fillColor,
+    double? strokeWidth,
+  }) {
+    return CircleShape(
+      start: start,
+      end: end,
+      strokeColor: strokeColor ?? this.strokeColor,
+      fillColor: fillColor ?? this.fillColor,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+    );
+  }
 }

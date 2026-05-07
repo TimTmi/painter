@@ -30,4 +30,29 @@ class EllipseShape extends Shape {
       ..style = PaintingStyle.stroke;
     canvas.drawOval(rect, strokePaint);
   }
+
+  @override
+  bool contains(Offset point) {
+    final center = rect.center;
+    final a = rect.width / 2 + strokeWidth / 2;
+    final b = rect.height / 2 + strokeWidth / 2;
+    final dx = point.dx - center.dx;
+    final dy = point.dy - center.dy;
+    return (dx * dx) / (a * a) + (dy * dy) / (b * b) <= 1.0;
+  }
+
+  @override
+  EllipseShape copyWith({
+    Color? strokeColor,
+    Color? fillColor,
+    double? strokeWidth,
+  }) {
+    return EllipseShape(
+      start: start,
+      end: end,
+      strokeColor: strokeColor ?? this.strokeColor,
+      fillColor: fillColor ?? this.fillColor,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+    );
+  }
 }
