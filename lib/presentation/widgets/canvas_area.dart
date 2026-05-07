@@ -23,11 +23,13 @@ class CanvasArea extends StatefulWidget {
     super.key,
     required this.canvasState,
     this.onDragChanged,
+    this.repaintBoundaryKey,
     this.onTap,
   });
 
   final CanvasState canvasState;
   final ValueChanged<CanvasDragState>? onDragChanged;
+  final GlobalKey? repaintBoundaryKey;
   final ValueChanged<Offset>? onTap;
 
   @override
@@ -92,6 +94,7 @@ class _CanvasAreaState extends State<CanvasArea> {
       onPanCancel: _handlePanCancel,
       onTapUp: _handleTapUp,
       child: RepaintBoundary(
+        key: widget.repaintBoundaryKey,
         child: CustomPaint(
           painter: CanvasPainter(canvasState: widget.canvasState),
           child: const SizedBox.expand(),

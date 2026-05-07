@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:paint/application/canvas_state.dart';
 import 'package:paint/application/drawing_controller.dart';
 import 'package:paint/application/tool_controller.dart';
+import 'package:paint/infrastructure/image_export.dart';
 import 'package:paint/infrastructure/binary_file_service.dart';
 import 'package:paint/presentation/widgets/canvas_area.dart';
 import 'package:paint/presentation/widgets/toolbar.dart';
@@ -23,6 +24,10 @@ class DrawingScreen extends StatefulWidget {
 class _DrawingScreenState extends State<DrawingScreen> {
   final CanvasState _canvasState = CanvasState();
   final ToolController _toolController = ToolController();
+  final ImageExport _imageExport = ImageExport();
+  final GlobalKey _canvasRepaintBoundaryKey = GlobalKey(
+    debugLabel: 'canvas-repaint-boundary',
+  );
   late final DrawingController _drawingController = DrawingController(
     canvasState: _canvasState,
     toolController: _toolController,
@@ -88,6 +93,26 @@ class _DrawingScreenState extends State<DrawingScreen> {
     }
   }
 
+  Future<void> _handleExportImagePressed() async {
+    try {
+      final filePath = await _imageExport.exportPng(
+        repaintBoundaryKey: _canvasRepaintBoundaryKey,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      _showFileActionMessage('Image exported: $filePath');
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+
+      _showFileActionMessage('Export failed: $error');
+    }
+  }
+
   void _showFileActionMessage(String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -108,11 +133,13 @@ class _DrawingScreenState extends State<DrawingScreen> {
             toolController: _toolController,
             onSave: _handleSavePressed,
             onLoad: _handleLoadPressed,
+            onExportImage: _handleExportImagePressed,
           ),
           Expanded(
             child: CanvasArea(
               canvasState: _canvasState,
               onDragChanged: _handleCanvasDragChanged,
+              repaintBoundaryKey: _canvasRepaintBoundaryKey,
               onTap: _handleCanvasTap,
             ),
           ),
