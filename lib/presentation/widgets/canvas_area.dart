@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:paint/application/canvas_state.dart';
+import 'package:paint/painters/canvas_painter.dart';
 
 enum CanvasDragPhase { start, update, end, cancel }
 
@@ -17,8 +19,9 @@ class CanvasDragState {
 }
 
 class CanvasArea extends StatefulWidget {
-  const CanvasArea({super.key, this.onDragChanged});
+  const CanvasArea({super.key, required this.canvasState, this.onDragChanged});
 
+  final CanvasState canvasState;
   final ValueChanged<CanvasDragState>? onDragChanged;
 
   @override
@@ -79,29 +82,10 @@ class _CanvasAreaState extends State<CanvasArea> {
       onPanCancel: _handlePanCancel,
       child: RepaintBoundary(
         child: CustomPaint(
-          painter: const CanvasBackgroundPainter(),
+          painter: CanvasPainter(canvasState: widget.canvasState),
           child: const SizedBox.expand(),
         ),
       ),
     );
   }
-}
-
-class CanvasBackgroundPainter extends CustomPainter {
-  const CanvasBackgroundPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final backgroundPaint = Paint()..color = Colors.white;
-    canvas.drawRect(Offset.zero & size, backgroundPaint);
-
-    final borderPaint = Paint()
-      ..color = const Color(0xFFE0E0E0)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    canvas.drawRect(Offset.zero & size, borderPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CanvasBackgroundPainter oldDelegate) => false;
 }

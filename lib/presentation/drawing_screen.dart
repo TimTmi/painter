@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:paint/application/canvas_state.dart';
 import 'package:paint/application/drawing_controller.dart';
+import 'package:paint/application/tool_controller.dart';
 import 'package:paint/presentation/widgets/canvas_area.dart';
 import 'package:paint/presentation/widgets/toolbar.dart';
 
@@ -11,11 +13,18 @@ class DrawingScreen extends StatefulWidget {
 }
 
 class _DrawingScreenState extends State<DrawingScreen> {
-  final DrawingController _drawingController = DrawingController();
+  final CanvasState _canvasState = CanvasState();
+  final ToolController _toolController = ToolController();
+  late final DrawingController _drawingController = DrawingController(
+    canvasState: _canvasState,
+    toolController: _toolController,
+  );
 
   @override
   void dispose() {
     _drawingController.dispose();
+    _toolController.dispose();
+    _canvasState.dispose();
     super.dispose();
   }
 
@@ -56,8 +65,13 @@ class _DrawingScreenState extends State<DrawingScreen> {
       appBar: AppBar(title: const Text('Painter')),
       body: Column(
         children: [
-          Toolbar(onSave: _handleSavePressed, onLoad: _handleLoadPressed),
-          Expanded(child: CanvasArea(onDragChanged: _handleCanvasDragChanged)),
+          Toolbar(toolController: _toolController, onSave: _handleSavePressed, onLoad: _handleLoadPressed),
+          Expanded(
+            child: CanvasArea(
+              canvasState: _canvasState,
+              onDragChanged: _handleCanvasDragChanged,
+            ),
+          ),
           AnimatedBuilder(
             animation: _drawingController,
             builder: (context, child) {
