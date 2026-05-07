@@ -31,19 +31,27 @@ void main() {
   ) async {
     var savePressed = false;
     var loadPressed = false;
+    var undoPressed = false;
+    var clearPressed = false;
 
     await tester.pumpWidget(
       ToolbarTestHost(
         onSave: () => savePressed = true,
         onLoad: () => loadPressed = true,
+        onUndo: () => undoPressed = true,
+        onClear: () => clearPressed = true,
       ),
     );
 
     await tester.tap(find.byTooltip('Save'));
     await tester.tap(find.byTooltip('Load'));
+    await tester.tap(find.byTooltip('Undo'));
+    await tester.tap(find.byTooltip('Clear'));
 
     expect(savePressed, true);
     expect(loadPressed, true);
+    expect(undoPressed, true);
+    expect(clearPressed, true);
   });
 
   testWidgets('Painter screen shows save and load buttons', (
@@ -53,6 +61,8 @@ void main() {
 
     expect(find.byTooltip('Save'), findsOneWidget);
     expect(find.byTooltip('Load'), findsOneWidget);
+    expect(find.byTooltip('Undo'), findsOneWidget);
+    expect(find.byTooltip('Clear'), findsOneWidget);
   });
 
   testWidgets('Painter screen wires save and load button actions', (
@@ -87,16 +97,29 @@ void main() {
 }
 
 class ToolbarTestHost extends StatelessWidget {
-  const ToolbarTestHost({super.key, this.onSave, this.onLoad});
+  const ToolbarTestHost({
+    super.key,
+    this.onSave,
+    this.onLoad,
+    this.onUndo,
+    this.onClear,
+  });
 
   final VoidCallback? onSave;
   final VoidCallback? onLoad;
+  final VoidCallback? onUndo;
+  final VoidCallback? onClear;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Toolbar(onSave: onSave, onLoad: onLoad),
+        body: Toolbar(
+          onSave: onSave,
+          onLoad: onLoad,
+          onUndo: onUndo,
+          onClear: onClear,
+        ),
       ),
     );
   }

@@ -3,11 +3,20 @@ import 'package:paint/application/tool_controller.dart';
 import 'package:paint/application/tool_type.dart';
 
 class Toolbar extends StatefulWidget {
-  const Toolbar({super.key, this.toolController, this.onSave, this.onLoad});
+  const Toolbar({
+    super.key,
+    this.toolController,
+    this.onSave,
+    this.onLoad,
+    this.onUndo,
+    this.onClear,
+  });
 
   final ToolController? toolController;
   final VoidCallback? onSave;
   final VoidCallback? onLoad;
+  final VoidCallback? onUndo;
+  final VoidCallback? onClear;
 
   @override
   State<Toolbar> createState() => _ToolbarState();
@@ -118,6 +127,16 @@ class _ToolbarState extends State<Toolbar> {
                   icon: Icons.folder_open_outlined,
                   label: 'Load',
                   onPressed: widget.onLoad,
+                ),
+                _fileButton(
+                  icon: Icons.undo,
+                  label: 'Undo',
+                  onPressed: widget.onUndo,
+                ),
+                _fileButton(
+                  icon: Icons.delete_outline,
+                  label: 'Clear',
+                  onPressed: widget.onClear,
                 ),
                 const VerticalDivider(width: 20),
                 _toolButton(

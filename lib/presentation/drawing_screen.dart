@@ -53,6 +53,16 @@ class _DrawingScreenState extends State<DrawingScreen> {
     _showFileActionMessage('Load file');
   }
 
+  void _handleUndoPressed() {
+    _canvasState.undoLastShape();
+    _drawingController.clearPoints();
+  }
+
+  void _handleClearPressed() {
+    _canvasState.clear();
+    _drawingController.clearPoints();
+  }
+
   void _showFileActionMessage(String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -69,6 +79,8 @@ class _DrawingScreenState extends State<DrawingScreen> {
             toolController: _toolController,
             onSave: _handleSavePressed,
             onLoad: _handleLoadPressed,
+            onUndo: _handleUndoPressed,
+            onClear: _handleClearPressed,
           ),
           Expanded(
             child: CanvasArea(

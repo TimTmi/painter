@@ -57,8 +57,7 @@ class DrawingController extends ChangeNotifier {
       strokeWidth: _toolController.strokeWidth,
     );
 
-    _canvasState.addShape(shape);
-    _canvasState.updatePreview(null);
+    _canvasState.commitShape(shape);
     _isDrawing = false;
     notifyListeners();
   }
@@ -74,11 +73,17 @@ class DrawingController extends ChangeNotifier {
   }
 
   void clearPoints() {
+    final hasPoints =
+        _startPoint != null || _currentPoint != null || _isDrawing;
+
     _startPoint = null;
     _currentPoint = null;
     _isDrawing = false;
     _canvasState.updatePreview(null);
-    notifyListeners();
+
+    if (hasPoints) {
+      notifyListeners();
+    }
   }
 
   void _updatePreview() {

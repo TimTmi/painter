@@ -66,6 +66,43 @@ void main() {
       expect(state.previewShape, isNull);
     });
 
+    test('CanvasState should undo the latest shape', () {
+      final state = CanvasState();
+      var notifyCount = 0;
+      state.addListener(() => notifyCount++);
+
+      const firstShape = MockShape();
+      const secondShape = MockShape();
+
+      state.addShape(firstShape);
+      state.addShape(secondShape);
+
+      expect(state.canUndo, true);
+      expect(state.shapes, [firstShape, secondShape]);
+
+      state.undoLastShape();
+
+      expect(state.shapes, [firstShape]);
+      expect(state.previewShape, isNull);
+      expect(notifyCount, 3);
+    });
+
+    test('CanvasState should commit shape and clear preview in one update', () {
+      final state = CanvasState();
+      var notifyCount = 0;
+      state.addListener(() => notifyCount++);
+
+      const previewShape = MockShape();
+      const finalShape = MockShape();
+
+      state.updatePreview(previewShape);
+      state.commitShape(finalShape);
+
+      expect(state.shapes, [finalShape]);
+      expect(state.previewShape, isNull);
+      expect(notifyCount, 2);
+    });
+
     test('LineShape should expose drawing contract properties', () {
       const shape = LineShape(
         start: Offset(0, 0),
