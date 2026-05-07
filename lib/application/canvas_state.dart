@@ -18,6 +18,14 @@ class CanvasState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void replaceShapes(Iterable<Shape> shapes) {
+    _shapes
+      ..clear()
+      ..addAll(shapes);
+    _previewShape = null;
+    notifyListeners();
+  }
+
   void clear() {
     _shapes.clear();
     _previewShape = null;
