@@ -66,6 +66,26 @@ void main() {
       expect(state.previewShape, isNull);
     });
 
+    test('CanvasState should replace shapes and clear preview', () {
+      final state = CanvasState();
+
+      const firstShape = MockShape();
+      const previewShape = MockShape();
+      state.addShape(firstShape);
+      state.updatePreview(previewShape);
+
+      const replacement = LineShape(
+        start: Offset(1, 2),
+        end: Offset(3, 4),
+        strokeColor: Color(0xFF000000),
+        strokeWidth: 1,
+      );
+      state.replaceShapes(const [replacement]);
+
+      expect(state.shapes, [replacement]);
+      expect(state.previewShape, isNull);
+    });
+
     test('LineShape should expose drawing contract properties', () {
       const shape = LineShape(
         start: Offset(0, 0),
