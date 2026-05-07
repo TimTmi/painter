@@ -30,4 +30,20 @@ class SquareShape extends Shape {
       ..style = PaintingStyle.stroke;
     canvas.drawRect(rect, strokePaint);
   }
+
+  @override
+  bool contains(Offset point) {
+    return rect.inflate(strokeWidth / 2).contains(point);
+  }
+
+  @override
+  SquareShape copyWith({Color? strokeColor, Color? fillColor, double? strokeWidth}) {
+    return SquareShape(
+      start: start,
+      end: end,
+      strokeColor: strokeColor ?? this.strokeColor,
+      fillColor: fillColor ?? this.fillColor,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+    );
+  }
 }

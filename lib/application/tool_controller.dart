@@ -6,9 +6,12 @@ class ToolController extends ChangeNotifier {
   Color _strokeColor = Colors.black;
   double _strokeWidth = 4;
 
+  Color _fillColor = const Color(0x00000000);
+
   ToolType get selectedTool => _selectedTool;
   Color get strokeColor => _strokeColor;
   double get strokeWidth => _strokeWidth;
+  Color get fillColor => _fillColor;
 
   void setTool(ToolType tool) {
     if (_selectedTool != tool) {
@@ -27,6 +30,13 @@ class ToolController extends ChangeNotifier {
   void setStrokeWidth(double width) {
     if (_strokeWidth != width) {
       _strokeWidth = width;
+      notifyListeners();
+    }
+  }
+
+  void setFillColor(Color color) {
+    if (_fillColor != color) {
+      _fillColor = color;
       notifyListeners();
     }
   }

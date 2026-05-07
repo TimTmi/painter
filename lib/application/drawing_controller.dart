@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:paint/application/canvas_state.dart';
 import 'package:paint/application/shape_factory.dart';
 import 'package:paint/application/tool_controller.dart';
+import 'package:paint/application/tool_type.dart';
 
 class DrawingController extends ChangeNotifier {
   DrawingController({
@@ -23,7 +24,24 @@ class DrawingController extends ChangeNotifier {
   Offset? get currentPoint => _currentPoint;
   bool get isDrawing => _isDrawing;
 
+  bool get _isEditTool =>
+      _toolController.selectedTool == ToolType.fill ||
+      _toolController.selectedTool == ToolType.erase;
+
+  void applyTool(Offset point) {
+    final tool = _toolController.selectedTool;
+    final hit = _canvasState.findShapeAt(point);
+    if (hit == null) return;
+
+    if (tool == ToolType.fill) {
+      _canvasState.replaceShape(hit, hit.copyWith(fillColor: _toolController.fillColor));
+    } else if (tool == ToolType.erase) {
+      _canvasState.removeShape(hit);
+    }
+  }
+
   void startDrawing(Offset point) {
+    if (_isEditTool) return;
     _startPoint = point;
     _currentPoint = point;
     _isDrawing = true;
@@ -54,6 +72,7 @@ class DrawingController extends ChangeNotifier {
       start: startPoint,
       end: currentPoint,
       strokeColor: _toolController.strokeColor,
+      fillColor: _toolController.fillColor,
       strokeWidth: _toolController.strokeWidth,
     );
 
@@ -95,6 +114,7 @@ class DrawingController extends ChangeNotifier {
       start: startPoint,
       end: currentPoint,
       strokeColor: _toolController.strokeColor,
+      fillColor: _toolController.fillColor,
       strokeWidth: _toolController.strokeWidth,
     );
 

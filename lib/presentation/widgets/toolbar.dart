@@ -45,6 +45,10 @@ class _ToolbarState extends State<Toolbar> {
     _toolController.setStrokeColor(color);
   }
 
+  void _setFillColor(Color color) {
+    _toolController.setFillColor(color);
+  }
+
   Widget _toolButton(
     BuildContext context,
     ToolType selectedTool,
@@ -100,6 +104,7 @@ class _ToolbarState extends State<Toolbar> {
         final selectedTool = _toolController.selectedTool;
         final strokeWidth = _toolController.strokeWidth;
         final strokeColor = _toolController.strokeColor;
+        final fillColor = _toolController.fillColor;
 
         return Material(
           color: Theme.of(context).colorScheme.surface,
@@ -163,6 +168,21 @@ class _ToolbarState extends State<Toolbar> {
                   'Ellipse',
                 ),
                 const VerticalDivider(width: 20),
+                _toolButton(
+                  context,
+                  selectedTool,
+                  ToolType.fill,
+                  Icons.format_color_fill,
+                  'Fill',
+                ),
+                _toolButton(
+                  context,
+                  selectedTool,
+                  ToolType.erase,
+                  Icons.auto_fix_high,
+                  'Erase',
+                ),
+                const VerticalDivider(width: 20),
                 SizedBox(
                   width: 180,
                   child: Row(
@@ -182,13 +202,55 @@ class _ToolbarState extends State<Toolbar> {
                   ),
                 ),
                 const VerticalDivider(width: 20),
-                Row(
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _colorSwatch(Colors.black, strokeColor),
-                    _colorSwatch(Colors.red, strokeColor),
-                    _colorSwatch(Colors.green, strokeColor),
-                    _colorSwatch(Colors.blue, strokeColor),
-                    _colorSwatch(Colors.yellow, strokeColor),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        'Stroke',
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        _colorSwatch(Colors.black, strokeColor, _setColor),
+                        _colorSwatch(Colors.red, strokeColor, _setColor),
+                        _colorSwatch(Colors.green, strokeColor, _setColor),
+                        _colorSwatch(Colors.blue, strokeColor, _setColor),
+                        _colorSwatch(Colors.yellow, strokeColor, _setColor),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 8),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        'Fill',
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        _colorSwatch(
+                          const Color(0x00000000),
+                          fillColor,
+                          _setFillColor,
+                          label: 'None',
+                        ),
+                        _colorSwatch(Colors.red, fillColor, _setFillColor),
+                        _colorSwatch(Colors.green, fillColor, _setFillColor),
+                        _colorSwatch(Colors.blue, fillColor, _setFillColor),
+                        _colorSwatch(Colors.yellow, fillColor, _setFillColor),
+                        _colorSwatch(Colors.white, fillColor, _setFillColor),
+                      ],
+                    ),
                   ],
                 ),
                 Padding(
@@ -217,11 +279,16 @@ class _ToolbarState extends State<Toolbar> {
     );
   }
 
-  Widget _colorSwatch(Color color, Color selectedColor) {
+  Widget _colorSwatch(
+    Color color,
+    Color selectedColor,
+    void Function(Color) onTap, {
+    String? label,
+  }) {
     final selected = selectedColor.toARGB32() == color.toARGB32();
 
     return GestureDetector(
-      onTap: () => _setColor(color),
+      onTap: () => onTap(color),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4),
         width: 28,
@@ -234,6 +301,14 @@ class _ToolbarState extends State<Toolbar> {
             width: selected ? 2 : 1,
           ),
         ),
+        child: label != null
+            ? Center(
+                child: Text(
+                  label,
+                  style: const TextStyle(fontSize: 8, color: Colors.black54),
+                ),
+              )
+            : null,
       ),
     );
   }
