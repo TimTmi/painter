@@ -36,13 +36,27 @@ class _DrawingScreenState extends State<DrawingScreen> {
     }
   }
 
+  void _handleSavePressed() {
+    _showFileActionMessage('Save file');
+  }
+
+  void _handleLoadPressed() {
+    _showFileActionMessage('Load file');
+  }
+
+  void _showFileActionMessage(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Painter')),
       body: Column(
         children: [
-          const Toolbar(),
+          Toolbar(onSave: _handleSavePressed, onLoad: _handleLoadPressed),
           Expanded(child: CanvasArea(onDragChanged: _handleCanvasDragChanged)),
           AnimatedBuilder(
             animation: _drawingController,
