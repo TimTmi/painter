@@ -24,6 +24,6 @@ void main() {
 
     expect(find.textContaining('start:'), findsOneWidget);
     expect(find.textContaining('current:'), findsOneWidget);
-    expect(find.textContaining('dragging: false'), findsOneWidget);
+    expect(find.textContaining('drawing: false'), findsOneWidget);
   });
 }

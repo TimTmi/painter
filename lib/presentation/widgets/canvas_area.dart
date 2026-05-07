@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
+enum CanvasDragPhase { start, update, end, cancel }
+
 class CanvasDragState {
   const CanvasDragState({
     required this.startPoint,
     required this.currentPoint,
+    required this.phase,
     required this.isDragging,
   });
 
   final Offset startPoint;
   final Offset currentPoint;
+  final CanvasDragPhase phase;
   final bool isDragging;
 }
 
@@ -25,7 +29,10 @@ class _CanvasAreaState extends State<CanvasArea> {
   Offset? _startPoint;
   Offset? _currentPoint;
 
-  void _emitDragState({required bool isDragging}) {
+  void _emitDragState({
+    required CanvasDragPhase phase,
+    required bool isDragging,
+  }) {
     final startPoint = _startPoint;
     final currentPoint = _currentPoint;
 
@@ -37,32 +44,29 @@ class _CanvasAreaState extends State<CanvasArea> {
       CanvasDragState(
         startPoint: startPoint,
         currentPoint: currentPoint,
+        phase: phase,
         isDragging: isDragging,
       ),
     );
   }
 
   void _handlePanStart(DragStartDetails details) {
-    setState(() {
-      _startPoint = details.localPosition;
-      _currentPoint = details.localPosition;
-    });
-    _emitDragState(isDragging: true);
+    _startPoint = details.localPosition;
+    _currentPoint = details.localPosition;
+    _emitDragState(phase: CanvasDragPhase.start, isDragging: true);
   }
 
   void _handlePanUpdate(DragUpdateDetails details) {
-    setState(() {
-      _currentPoint = details.localPosition;
-    });
-    _emitDragState(isDragging: true);
+    _currentPoint = details.localPosition;
+    _emitDragState(phase: CanvasDragPhase.update, isDragging: true);
   }
 
   void _handlePanEnd(DragEndDetails details) {
-    _emitDragState(isDragging: false);
+    _emitDragState(phase: CanvasDragPhase.end, isDragging: false);
   }
 
   void _handlePanCancel() {
-    _emitDragState(isDragging: false);
+    _emitDragState(phase: CanvasDragPhase.cancel, isDragging: false);
   }
 
   @override
@@ -73,9 +77,11 @@ class _CanvasAreaState extends State<CanvasArea> {
       onPanUpdate: _handlePanUpdate,
       onPanEnd: _handlePanEnd,
       onPanCancel: _handlePanCancel,
-      child: CustomPaint(
-        painter: const CanvasBackgroundPainter(),
-        child: const SizedBox.expand(),
+      child: RepaintBoundary(
+        child: CustomPaint(
+          painter: const CanvasBackgroundPainter(),
+          child: const SizedBox.expand(),
+        ),
       ),
     );
   }

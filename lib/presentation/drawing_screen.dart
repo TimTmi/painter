@@ -1,6 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:paint/application/drawing_controller.dart';
 import 'package:paint/presentation/widgets/canvas_area.dart';
 
 class DrawingScreen extends StatefulWidget {
@@ -11,19 +10,29 @@ class DrawingScreen extends StatefulWidget {
 }
 
 class _DrawingScreenState extends State<DrawingScreen> {
-  final StreamController<CanvasDragState> _dragController =
-      StreamController<CanvasDragState>.broadcast();
-
-  Stream<CanvasDragState> get dragStream => _dragController.stream;
+  final DrawingController _drawingController = DrawingController();
 
   @override
   void dispose() {
-    _dragController.close();
+    _drawingController.dispose();
     super.dispose();
   }
 
   void _handleCanvasDragChanged(CanvasDragState dragState) {
-    _dragController.add(dragState);
+    switch (dragState.phase) {
+      case CanvasDragPhase.start:
+        _drawingController.startDrawing(dragState.startPoint);
+        break;
+      case CanvasDragPhase.update:
+        _drawingController.updateDrawing(dragState.currentPoint);
+        break;
+      case CanvasDragPhase.end:
+        _drawingController.endDrawing();
+        break;
+      case CanvasDragPhase.cancel:
+        _drawingController.cancelDrawing();
+        break;
+    }
   }
 
   @override
@@ -33,18 +42,19 @@ class _DrawingScreenState extends State<DrawingScreen> {
       body: Column(
         children: [
           Expanded(child: CanvasArea(onDragChanged: _handleCanvasDragChanged)),
-          StreamBuilder<CanvasDragState>(
-            stream: dragStream,
-            builder: (context, snapshot) {
-              final dragState = snapshot.data;
+          AnimatedBuilder(
+            animation: _drawingController,
+            builder: (context, child) {
+              final startPoint = _drawingController.startPoint;
+              final currentPoint = _drawingController.currentPoint;
 
-              if (dragState == null) {
+              if (startPoint == null || currentPoint == null) {
                 return const _PointStatus(text: 'Drag on canvas');
               }
 
               return _PointStatus(
                 text:
-                    'start: ${_formatOffset(dragState.startPoint)} | current: ${_formatOffset(dragState.currentPoint)} | dragging: ${dragState.isDragging}',
+                    'start: ${_formatOffset(startPoint)} | current: ${_formatOffset(currentPoint)} | drawing: ${_drawingController.isDrawing}',
               );
             },
           ),
