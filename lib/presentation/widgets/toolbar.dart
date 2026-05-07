@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-enum ToolType { pen, line, rectangle, circle, eraser }
+import 'package:paint/application/tool_type.dart';
 
 class Toolbar extends StatefulWidget {
   const Toolbar({super.key});
@@ -10,7 +9,7 @@ class Toolbar extends StatefulWidget {
 }
 
 class _ToolbarState extends State<Toolbar> {
-  ToolType _selected = ToolType.pen;
+  ToolType _selected = ToolType.point;
   double _strokeWidth = 4;
   Color _color = Colors.black;
 
@@ -59,19 +58,24 @@ class _ToolbarState extends State<Toolbar> {
   Widget build(BuildContext context) {
     return Material(
       color: Theme.of(context).colorScheme.surface,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Tools
-            _toolButton(ToolType.pen, Icons.edit, 'Pen'),
+            const SizedBox(width: 8),
+            _toolButton(ToolType.point, Icons.radio_button_checked, 'Point'),
             _toolButton(ToolType.line, Icons.show_chart, 'Line'),
             _toolButton(ToolType.rectangle, Icons.crop_square, 'Rect'),
-            _toolButton(ToolType.circle, Icons.circle, 'Circle'),
-            _toolButton(ToolType.eraser, Icons.cleaning_services, 'Eraser'),
+            _toolButton(
+              ToolType.square,
+              Icons.check_box_outline_blank,
+              'Square',
+            ),
+            _toolButton(ToolType.circle, Icons.circle_outlined, 'Circle'),
+            _toolButton(ToolType.ellipse, Icons.panorama_fish_eye, 'Ellipse'),
             const VerticalDivider(width: 20),
 
-            // Stroke width (mock)
             SizedBox(
               width: 180,
               child: Row(
@@ -93,7 +97,6 @@ class _ToolbarState extends State<Toolbar> {
 
             const VerticalDivider(width: 20),
 
-            // Color swatches (mock)
             Row(
               children: [
                 _colorSwatch(Colors.black),
@@ -104,11 +107,8 @@ class _ToolbarState extends State<Toolbar> {
               ],
             ),
 
-            const Spacer(),
-
-            // Status summary (small)
             Padding(
-              padding: const EdgeInsets.only(right: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
                 children: [
                   Text(_selected.name.toUpperCase()),
