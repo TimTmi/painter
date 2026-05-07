@@ -31,6 +31,27 @@ void main() {
       expect(rect, const Rect.fromLTRB(4, 10, 10, 16));
       expect(rect.width, rect.height);
     });
+
+    test('creates square bounds for every drag quadrant', () {
+      const start = Offset(10, 10);
+
+      expect(
+        ShapeBounds.squareFromPoints(start, const Offset(18, 16)),
+        const Rect.fromLTRB(10, 10, 16, 16),
+      );
+      expect(
+        ShapeBounds.squareFromPoints(start, const Offset(2, 16)),
+        const Rect.fromLTRB(4, 10, 10, 16),
+      );
+      expect(
+        ShapeBounds.squareFromPoints(start, const Offset(18, 4)),
+        const Rect.fromLTRB(10, 4, 16, 10),
+      );
+      expect(
+        ShapeBounds.squareFromPoints(start, const Offset(2, 4)),
+        const Rect.fromLTRB(4, 4, 10, 10),
+      );
+    });
   });
 
   group('ShapeFactory', () {
@@ -57,6 +78,30 @@ void main() {
       expect(point.strokeColor, strokeColor);
       expect(point.fillColor, fillColor);
       expect(point.strokeWidth, strokeWidth);
+    });
+
+    test('creates a concrete shape for every drawing tool', () {
+      final expectedTypes = <ToolType, Type>{
+        ToolType.point: PointShape,
+        ToolType.line: LineShape,
+        ToolType.rectangle: RectangleShape,
+        ToolType.square: SquareShape,
+        ToolType.circle: CircleShape,
+        ToolType.ellipse: EllipseShape,
+      };
+
+      for (final entry in expectedTypes.entries) {
+        final shape = ShapeFactory.create(
+          toolType: entry.key,
+          start: start,
+          end: end,
+          strokeColor: strokeColor,
+          fillColor: fillColor,
+          strokeWidth: strokeWidth,
+        );
+
+        expect(shape.runtimeType, entry.value);
+      }
     });
 
     test('creates line from start and end', () {
