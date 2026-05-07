@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:paint/domain/shapes/shape.dart';
 import 'package:paint/domain/shapes/shape_bounds.dart';
 
-class RectangleShape extends Shape {
-  const RectangleShape({
+class SquareShape extends Shape {
+  const SquareShape({
     required this.start,
     required this.end,
     required super.strokeColor,
@@ -15,7 +15,7 @@ class RectangleShape extends Shape {
   final Offset start;
   final Offset end;
 
-  Rect get rect => ShapeBounds.rectFromPoints(start, end);
+  Rect get rect => ShapeBounds.squareFromPoints(start, end);
 
   @override
   void draw(Canvas canvas) {

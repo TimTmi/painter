@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:paint/domain/shapes/shape.dart';
 import 'package:paint/domain/shapes/shape_bounds.dart';
 
-class RectangleShape extends Shape {
-  const RectangleShape({
+class EllipseShape extends Shape {
+  const EllipseShape({
     required this.start,
     required this.end,
     required super.strokeColor,
@@ -22,12 +22,12 @@ class RectangleShape extends Shape {
     final fillPaint = Paint()
       ..color = fillColor
       ..style = PaintingStyle.fill;
-    canvas.drawRect(rect, fillPaint);
+    canvas.drawOval(rect, fillPaint);
 
     final strokePaint = Paint()
       ..color = strokeColor
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
-    canvas.drawRect(rect, strokePaint);
+    canvas.drawOval(rect, strokePaint);
   }
 }
