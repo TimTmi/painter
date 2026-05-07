@@ -1,13 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:paint/application/canvas_state.dart';
 import 'package:paint/application/drawing_controller.dart';
 import 'package:paint/application/tool_controller.dart';
 import 'package:paint/infrastructure/image_export.dart';
+import 'package:paint/infrastructure/binary_file_service.dart';
 import 'package:paint/presentation/widgets/canvas_area.dart';
 import 'package:paint/presentation/widgets/toolbar.dart';
 
 class DrawingScreen extends StatefulWidget {
-  const DrawingScreen({super.key});
+  const DrawingScreen({
+    super.key,
+    this.binaryFileService = const FilePickerBinaryFileService(),
+  });
+
+  final BinaryFileService binaryFileService;
 
   @override
   State<DrawingScreen> createState() => _DrawingScreenState();
@@ -51,11 +59,38 @@ class _DrawingScreenState extends State<DrawingScreen> {
   }
 
   void _handleSavePressed() {
-    _showFileActionMessage('Save file');
+    unawaited(_saveDrawing());
   }
 
   void _handleLoadPressed() {
-    _showFileActionMessage('Load file');
+    unawaited(_loadDrawing());
+  }
+
+  Future<void> _saveDrawing() async {
+    try {
+      final saved = await widget.binaryFileService.saveShapes(
+        _canvasState.shapes,
+      );
+      _showFileActionMessage(saved ? 'Saved painter file' : 'Save cancelled');
+    } on Object catch (error) {
+      _showFileActionMessage('Save failed: $error');
+    }
+  }
+
+  Future<void> _loadDrawing() async {
+    try {
+      final shapes = await widget.binaryFileService.loadShapes();
+      if (shapes == null) {
+        _showFileActionMessage('Load cancelled');
+        return;
+      }
+
+      _drawingController.clearPoints();
+      _canvasState.replaceShapes(shapes);
+      _showFileActionMessage('Loaded ${shapes.length} shape(s)');
+    } on Object catch (error) {
+      _showFileActionMessage('Load failed: $error');
+    }
   }
 
   Future<void> _handleExportImagePressed() async {
@@ -84,6 +119,10 @@ class _DrawingScreenState extends State<DrawingScreen> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
+  void _handleCanvasTap(Offset point) {
+    _drawingController.applyTool(point);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,6 +140,7 @@ class _DrawingScreenState extends State<DrawingScreen> {
               canvasState: _canvasState,
               onDragChanged: _handleCanvasDragChanged,
               repaintBoundaryKey: _canvasRepaintBoundaryKey,
+              onTap: _handleCanvasTap,
             ),
           ),
           AnimatedBuilder(

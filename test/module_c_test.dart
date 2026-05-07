@@ -10,14 +10,20 @@ import 'package:paint/domain/shapes/shape.dart';
 
 class MockShape extends Shape {
   const MockShape()
-    : super(
-        strokeColor: const Color(0xFF000000),
-        fillColor: const Color(0x00000000),
-        strokeWidth: 1,
-      );
+      : super(
+          strokeColor: const Color(0xFF000000),
+          fillColor: const Color(0x00000000),
+          strokeWidth: 1,
+        );
 
   @override
   void draw(Canvas canvas) {}
+
+  @override
+  bool contains(Offset point) => false;
+
+  @override
+  MockShape copyWith({Color? strokeColor, Color? fillColor, double? strokeWidth}) => this;
 }
 
 void main() {
@@ -63,6 +69,26 @@ void main() {
       expect(notified, true);
 
       state.updatePreview(null);
+      expect(state.previewShape, isNull);
+    });
+
+    test('CanvasState should replace shapes and clear preview', () {
+      final state = CanvasState();
+
+      const firstShape = MockShape();
+      const previewShape = MockShape();
+      state.addShape(firstShape);
+      state.updatePreview(previewShape);
+
+      const replacement = LineShape(
+        start: Offset(1, 2),
+        end: Offset(3, 4),
+        strokeColor: Color(0xFF000000),
+        strokeWidth: 1,
+      );
+      state.replaceShapes(const [replacement]);
+
+      expect(state.shapes, [replacement]);
       expect(state.previewShape, isNull);
     });
 

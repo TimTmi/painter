@@ -24,11 +24,13 @@ class CanvasArea extends StatefulWidget {
     required this.canvasState,
     this.onDragChanged,
     this.repaintBoundaryKey,
+    this.onTap,
   });
 
   final CanvasState canvasState;
   final ValueChanged<CanvasDragState>? onDragChanged;
   final GlobalKey? repaintBoundaryKey;
+  final ValueChanged<Offset>? onTap;
 
   @override
   State<CanvasArea> createState() => _CanvasAreaState();
@@ -78,6 +80,10 @@ class _CanvasAreaState extends State<CanvasArea> {
     _emitDragState(phase: CanvasDragPhase.cancel, isDragging: false);
   }
 
+  void _handleTapUp(TapUpDetails details) {
+    widget.onTap?.call(details.localPosition);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -86,6 +92,7 @@ class _CanvasAreaState extends State<CanvasArea> {
       onPanUpdate: _handlePanUpdate,
       onPanEnd: _handlePanEnd,
       onPanCancel: _handlePanCancel,
+      onTapUp: _handleTapUp,
       child: RepaintBoundary(
         key: widget.repaintBoundaryKey,
         child: CustomPaint(
