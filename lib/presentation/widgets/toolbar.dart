@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:paint/application/tool_type.dart';
 
 class Toolbar extends StatefulWidget {
-  const Toolbar({super.key});
+  const Toolbar({super.key, this.onSave, this.onLoad});
+
+  final VoidCallback? onSave;
+  final VoidCallback? onLoad;
 
   @override
   State<Toolbar> createState() => _ToolbarState();
@@ -54,6 +57,17 @@ class _ToolbarState extends State<Toolbar> {
     );
   }
 
+  Widget _fileButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback? onPressed,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: IconButton(onPressed: onPressed, icon: Icon(icon), tooltip: label),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -74,6 +88,18 @@ class _ToolbarState extends State<Toolbar> {
             ),
             _toolButton(ToolType.circle, Icons.circle_outlined, 'Circle'),
             _toolButton(ToolType.ellipse, Icons.panorama_fish_eye, 'Ellipse'),
+            const VerticalDivider(width: 20),
+
+            _fileButton(
+              icon: Icons.save_outlined,
+              label: 'Save',
+              onPressed: widget.onSave,
+            ),
+            _fileButton(
+              icon: Icons.folder_open_outlined,
+              label: 'Load',
+              onPressed: widget.onLoad,
+            ),
             const VerticalDivider(width: 20),
 
             SizedBox(
