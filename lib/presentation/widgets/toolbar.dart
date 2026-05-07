@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:paint/application/tool_controller.dart';
 import 'package:paint/application/tool_type.dart';
 
-class Toolbar extends StatelessWidget {
-  const Toolbar({super.key, required this.toolController});
+class Toolbar extends StatefulWidget {
+  const Toolbar({super.key, required this.toolController, this.onSave, this.onLoad});
+
+  final VoidCallback? onSave;
+  final VoidCallback? onLoad;
 
   final ToolController toolController;
 
@@ -55,6 +58,17 @@ class Toolbar extends StatelessWidget {
     );
   }
 
+  Widget _fileButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback? onPressed,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: IconButton(onPressed: onPressed, icon: Icon(icon), tooltip: label),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -70,6 +84,40 @@ class Toolbar extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               mainAxisSize: MainAxisSize.min,
+            _fileButton(
+              icon: Icons.save_outlined,
+              label: 'Save',
+              onPressed: widget.onSave,
+            ),
+            _fileButton(
+              icon: Icons.folder_open_outlined,
+              label: 'Load',
+              onPressed: widget.onLoad,
+            ),
+            const VerticalDivider(width: 20),
+
+            SizedBox(
+              width: 180,
+              child: Row(
+                children: [
+                  const Text('Width'),
+                  Expanded(
+                    child: Slider(
+                      value: _strokeWidth,
+                      min: 1,
+                      max: 20,
+                      divisions: 19,
+                      label: _strokeWidth.toStringAsFixed(0),
+                      onChanged: _setStrokeWidth,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const VerticalDivider(width: 20),
+
+            Row(
               children: [
                 const SizedBox(width: 8),
                 _toolButton(
