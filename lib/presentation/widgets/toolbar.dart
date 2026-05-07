@@ -111,7 +111,7 @@ class _ToolbarState extends State<Toolbar> {
               padding: const EdgeInsets.only(right: 8.0),
               child: Row(
                 children: [
-                  Text('${_selected.name.toUpperCase()}'),
+                  Text(_selected.name.toUpperCase()),
                   const SizedBox(width: 8),
                   Container(
                     width: 20,
@@ -132,7 +132,7 @@ class _ToolbarState extends State<Toolbar> {
   }
 
   Widget _colorSwatch(Color c) {
-    final selected = _color.value == c.value;
+    final selected = _color.toARGB32() == c.toARGB32();
     return GestureDetector(
       onTap: () => _setColor(c),
       child: Container(
