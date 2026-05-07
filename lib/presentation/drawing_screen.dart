@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:paint/presentation/widgets/canvas_area.dart';
+import 'package:paint/presentation/widgets/toolbar.dart';
 
 class DrawingScreen extends StatefulWidget {
   const DrawingScreen({super.key});
@@ -32,6 +33,7 @@ class _DrawingScreenState extends State<DrawingScreen> {
       appBar: AppBar(title: const Text('Painter')),
       body: Column(
         children: [
+          const Toolbar(),
           Expanded(child: CanvasArea(onDragChanged: _handleCanvasDragChanged)),
           StreamBuilder<CanvasDragState>(
             stream: dragStream,
