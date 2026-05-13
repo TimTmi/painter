@@ -2,16 +2,20 @@
 
 ## Thông tin nhóm
 
-| STT | MSSV | Họ và tên |
-| --- | --- | --- |
-| 1 | 23127221 | Nguyễn Tiến Luật |
-| 2 | 23127228 | Phạm Văn Minh |
-| 3 | 23127281 | Đặng Nghi Văn |
-| 4 | 23127395 | Trần Anh Khoa |
+| STT | MSSV     | Họ và tên        |
+| --- | -------- | ---------------- |
+| 1   | 23127221 | Nguyễn Tiến Luật |
+| 2   | 23127228 | Phạm Văn Minh    |
+| 3   | 23127281 | Đặng Nghi Văn    |
+| 4   | 23127395 | Trần Anh Khoa    |
 
 ## Giới thiệu đề tài
 
 Painter là ứng dụng vẽ cơ bản được xây dựng bằng Flutter, hỗ trợ chạy trên Windows và thiết bị Mobile. Ứng dụng cho phép người dùng vẽ các đối tượng hình học cơ bản, tùy chỉnh màu sắc, độ dày đường viền, lưu bản vẽ bằng định dạng nhị phân tự định nghĩa và nạp lại để tiếp tục chỉnh sửa.
+
+## Video demo
+
+https://youtu.be/EQtAow2J-Vo
 
 ## Công nghệ sử dụng
 
