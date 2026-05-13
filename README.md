@@ -87,10 +87,6 @@ flutter run -d <device_id>
 9. Bấm Load để nạp lại tệp `.pnt`.
 10. Bấm Export PNG để xuất bản vẽ ra ảnh PNG.
 
-## Video demo
-
-- Link video demo các chức năng: [Xem video demo](https://drive.google.com/file/d/1uhm9wS7eZk79s2Y1VIikEjtv8Q3mVEOf/view?usp=sharing)
-
 ## Kiểm thử
 
 Dự án có các bài test cho những phần chính:
